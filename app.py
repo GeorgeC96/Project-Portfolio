@@ -44,75 +44,94 @@ df_encoded_relevant = df_encoded[relevant_vars]
 df_standardized_relevant = df_standardized[relevant_vars]
 
 # Streamlit App
-st.title('IBM Employee Attrition Analysis')
+st.set_page_config(page_title="IBM Employee Attrition Dashboard", layout="wide")
 
-# Display dataset
-st.header('Dataset')
-st.write(df.head())
+# Title
+st.title('IBM Employee Attrition Dashboard')
 
-# Correlation matrices
-st.header('Correlation Matrix (Encoded Data)')
-fig, ax = plt.subplots(figsize=(12, 10))
-sns.heatmap(df_encoded_relevant.corr().round(2), annot=True, cmap='coolwarm', annot_kws={"size": 8}, ax=ax)
-st.pyplot(fig)
+# Create Tabs for Organization
+tab1, tab2, tab3, tab4 = st.tabs(["Overview", "Correlation Analysis", "Distributions", "Model Performance"])
 
-st.header('Correlation Matrix (Standardized Data)')
-fig, ax = plt.subplots(figsize=(12, 10))
-sns.heatmap(df_standardized_relevant.corr().round(2), annot=True, cmap='coolwarm', annot_kws={"size": 8}, ax=ax)
-st.pyplot(fig)
+with tab1:
+    st.header('Overview')
+    st.write("This dashboard provides an analysis of IBM employee attrition data. It includes correlation matrices, distributions of key variables, and model performance evaluations.")
+    st.write("### Dataset")
+    st.write(df.head())
 
-# Plot distributions
-st.header('Distributions by Attrition')
-key_numerical_columns = [
-    'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany'
-]
-for column in key_numerical_columns:
-    fig, ax = plt.subplots(figsize=(12, 6))
-    sns.histplot(df_encoded, x=column, hue='Attrition_Yes', multiple='stack', bins=30, ax=ax)
-    ax.set_title(f'Distribution of {column} by Attrition')
-    st.pyplot(fig)
+with tab2:
+    st.header('Correlation Analysis')
 
-# Model Training and Evaluation
-st.header('Model Performance')
-features = [
-    'Age', 'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany',
-    'OverTime_Yes', 'BusinessTravel_Travel_Frequently', 'BusinessTravel_Travel_Rarely'
-]
-target = 'Attrition_Yes'
-features = [col for col in features if col in df_encoded.columns]
-X = df_encoded[features]
-y = df_encoded[target]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+    # Correlation Matrices
+    col1, col2 = st.columns(2)
 
-models = {
-    'Logistic Regression': LogisticRegression(random_state=42),
-    'Random Forest': RandomForestClassifier(random_state=42),
-    'Support Vector Machine': SVC(random_state=42)
-}
+    with col1:
+        st.subheader('Correlation Matrix (Encoded Data)')
+        fig, ax = plt.subplots(figsize=(10, 8))
+        sns.heatmap(df_encoded_relevant.corr().round(2), annot=True, cmap='coolwarm', annot_kws={"size": 8}, ax=ax)
+        st.pyplot(fig)
 
-for name, model in models.items():
-    model.fit(X_train_scaled, y_train)
-    y_pred = model.predict(X_test_scaled)
-    st.subheader(f"{name} (Without Class Weights) Results:")
-    st.text(f"Accuracy: {accuracy_score(y_test, y_pred):.2f}")
-    st.text(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}")
-    st.text(f"Classification Report:\n{classification_report(y_test, y_pred)}")
+    with col2:
+        st.subheader('Correlation Matrix (Standardized Data)')
+        fig, ax = plt.subplots(figsize=(10, 8))
+        sns.heatmap(df_standardized_relevant.corr().round(2), annot=True, cmap='coolwarm', annot_kws={"size": 8}, ax=ax)
+        st.pyplot(fig)
 
-# Models with class weights
-models_weighted = {
-    'Logistic Regression': LogisticRegression(class_weight='balanced', random_state=42),
-    'Random Forest': RandomForestClassifier(class_weight='balanced', random_state=42),
-    'Support Vector Machine': SVC(class_weight='balanced', random_state=42)
-}
+with tab3:
+    st.header('Distributions by Attrition')
 
-for name, model in models_weighted.items():
-    model.fit(X_train_scaled, y_train)
-    y_pred = model.predict(X_test_scaled)
-    st.subheader(f"{name} (With Class Weights) Results:")
-    st.text(f"Accuracy: {accuracy_score(y_test, y_pred):.2f}")
-    st.text(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}")
-    st.text(f"Classification Report:\n{classification_report(y_test, y_pred)}")
+    # Plot Distributions
+    key_numerical_columns = [
+        'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany'
+    ]
+    for column in key_numerical_columns:
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.histplot(df_encoded, x=column, hue='Attrition_Yes', multiple='stack', bins=30, ax=ax)
+        ax.set_title(f'Distribution of {column} by Attrition')
+        st.pyplot(fig)
 
+with tab4:
+    st.header('Model Performance')
+    
+    # Model Training and Evaluation
+    features = [
+        'Age', 'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany',
+        'OverTime_Yes', 'BusinessTravel_Travel_Frequently', 'BusinessTravel_Travel_Rarely'
+    ]
+    target = 'Attrition_Yes'
+    features = [col for col in features if col in df_encoded.columns]
+    X = df_encoded[features]
+    y = df_encoded[target]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    models = {
+        'Logistic Regression': LogisticRegression(random_state=42),
+        'Random Forest': RandomForestClassifier(random_state=42),
+        'Support Vector Machine': SVC(random_state=42)
+    }
+
+    st.subheader('Models without Class Weights')
+    for name, model in models.items():
+        model.fit(X_train_scaled, y_train)
+        y_pred = model.predict(X_test_scaled)
+        st.write(f"### {name} Results:")
+        st.write(f"**Accuracy:** {accuracy_score(y_test, y_pred):.2f}")
+        st.write(f"**Confusion Matrix:**\n{confusion_matrix(y_test, y_pred)}")
+        st.write(f"**Classification Report:**\n{classification_report(y_test, y_pred)}")
+
+    st.subheader('Models with Class Weights')
+    models_weighted = {
+        'Logistic Regression': LogisticRegression(class_weight='balanced', random_state=42),
+        'Random Forest': RandomForestClassifier(class_weight='balanced', random_state=42),
+        'Support Vector Machine': SVC(class_weight='balanced', random_state=42)
+    }
+
+    for name, model in models_weighted.items():
+        model.fit(X_train_scaled, y_train)
+        y_pred = model.predict(X_test_scaled)
+        st.write(f"### {name} (With Class Weights) Results:")
+        st.write(f"**Accuracy:** {accuracy_score(y_test, y_pred):.2f}")
+        st.write(f"**Confusion Matrix:**\n{confusion_matrix(y_test, y_pred)}")
+        st.write(f"**Classification Report:**\n{classification_report(y_test, y_pred)}")
