@@ -144,4 +144,3 @@ with tabs[5]:
         st.text(f"Accuracy: {accuracy_score(y_test, y_pred):.2f}")
         st.text(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}")
         st.text(f"Classification Report:\n{classification_report(y_test, y_pred)}")
-
