@@ -78,17 +78,32 @@ with tab2:
 
 with tab3:
     st.header('Distributions by Attrition')
+# Define the columns to plot and their titles
+key_numerical_columns = [
+    'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany'
+]
+titles = [
+    'DistanceFromHome by Attrition',
+    'JobSatisfaction by Attrition',
+    'MonthlyIncome by Attrition',
+    'YearsAtCompany by Attrition'
+]
 
-    # Plot Distributions
-    key_numerical_columns = [
-        'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany'
-    ]
-    for column in key_numerical_columns:
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.histplot(df_encoded, x=column, hue='Attrition_Yes', multiple='stack', bins=30, ax=ax)
-        ax.set_title(f'Distribution of {column} by Attrition')
-        st.pyplot(fig)
+# Create a 2x2 grid of subplots
+fig, axs = plt.subplots(2, 2, figsize=(14, 10))
+fig.tight_layout(pad=5.0)
 
+# Plot each distribution in the respective subplot
+for i, column in enumerate(key_numerical_columns):
+    row, col = divmod(i, 2)  # Determine the position in the grid
+    sns.histplot(df_encoded, x=column, hue='Attrition_Yes', multiple='stack', bins=30, ax=axs[row, col])
+    axs[row, col].set_title(titles[i])
+
+# Remove any empty subplots if less than 4 columns are defined
+for j in range(len(key_numerical_columns), 4):
+    fig.delaxes(axs[j // 2, j % 2])
+
+st.pyplot(fig)
 with tab4:
     st.header('Model Performance')
     
