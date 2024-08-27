@@ -10,7 +10,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 # File Path
-file_path = 'IBM Employee Attrition.csv'  # Adjust this if needed
+file_path = 'IBM Employee Attrition.csv'
 
 # Load and preprocess data
 df = pd.read_csv(file_path)
@@ -46,15 +46,13 @@ df_standardized_relevant = df_standardized[relevant_vars]
 # Streamlit App
 st.title('IBM Employee Attrition Analysis')
 
-# Create tabs
-tabs = st.tabs(["Home", "Correlation Matrices", "Distributions", "Countplots", "Boxplots", "Model Performance"])
+# Create tabs for different sections
+tabs = st.tabs(["Overview", "Correlation Analysis", "Distributions", "Countplots", "Boxplots", "Model Performance"])
 
-# Home Tab
 with tabs[0]:
-    st.header('Dataset')
-    st.write(df.head())
+    st.header('Overview')
+    st.write("This dashboard provides an analysis of employee attrition data. It includes correlation analysis, distribution plots, countplots, and boxplots to visualize the data and model performance metrics.")
 
-# Correlation Matrices Tab
 with tabs[1]:
     st.header('Correlation Matrix (Encoded Data)')
     fig, ax = plt.subplots(figsize=(12, 10))
@@ -66,99 +64,43 @@ with tabs[1]:
     sns.heatmap(df_standardized_relevant.corr().round(2), annot=True, cmap='coolwarm', annot_kws={"size": 8}, ax=ax)
     st.pyplot(fig)
 
-# Distributions Tab
 with tabs[2]:
     st.header('Distributions by Attrition')
-
-    # Define the columns to plot and their titles
     key_numerical_columns = [
         'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany'
     ]
-    titles = [
-        'DistanceFromHome by Attrition',
-        'JobSatisfaction by Attrition',
-        'MonthlyIncome by Attrition',
-        'YearsAtCompany by Attrition'
-    ]
-
-    # Create a 2x2 grid of subplots
-    fig, axs = plt.subplots(2, 2, figsize=(14, 10))
-    fig.tight_layout(pad=5.0)
-
-    # Plot each distribution in the respective subplot
+    num_columns = len(key_numerical_columns)
+    num_rows = (num_columns + 1) // 2
+    fig, axes = plt.subplots(num_rows, 2, figsize=(14, num_rows * 5))
+    axes = axes.flatten()
     for i, column in enumerate(key_numerical_columns):
-        row, col = divmod(i, 2)  # Determine the position in the grid
-        sns.histplot(df_encoded, x=column, hue='Attrition_Yes', multiple='stack', bins=30, ax=axs[row, col])
-        axs[row, col].set_title(titles[i])
-
-    # Remove any empty subplots if less than 4 columns are defined
-    for j in range(len(key_numerical_columns), 4):
-        fig.delaxes(axs[j // 2, j % 2])
-
+        sns.histplot(df_encoded, x=column, hue='Attrition_Yes', multiple='stack', bins=30, ax=axes[i])
+        axes[i].set_title(f'Distribution of {column} by Attrition')
+    for j in range(num_columns, len(axes)):
+        fig.delaxes(axes[j])
     st.pyplot(fig)
 
-# Countplots Tab
 with tabs[3]:
     st.header('Countplots')
-
-    # Define the columns to plot and their titles
-    countplot_columns = [
-        'BusinessTravel_Travel_Rarely', 'BusinessTravel_Travel_Frequently', 'OverTime_Yes'
-    ]
-    titles = [
-        'Business Travel: Rarely',
-        'Business Travel: Frequently',
-        'Overtime: Yes'
-    ]
-
-    # Create a 2x2 grid of subplots
-    fig, axs = plt.subplots(2, 2, figsize=(14, 10))
-    fig.tight_layout(pad=5.0)
-
-    # Plot each countplot in the respective subplot
+    countplot_columns = ['BusinessTravel_Travel_Rarely', 'BusinessTravel_Travel_Frequently', 'OverTime_Yes']
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    axes = axes.flatten()
     for i, column in enumerate(countplot_columns):
-        row, col = divmod(i, 2)  # Determine the position in the grid
-        sns.countplot(data=df_encoded, x=column, ax=axs[row, col])
-        axs[row, col].set_title(titles[i])
-
-    # Remove any empty subplots if less than 4 columns are defined
-    for j in range(len(countplot_columns), 4):
-        fig.delaxes(axs[j // 2, j % 2])
-
+        sns.countplot(x=column, data=df_encoded, ax=axes[i])
+        axes[i].set_title(f'Countplot of {column}')
+    fig.delaxes(axes[-1])  # Remove the extra subplot
     st.pyplot(fig)
 
-# Boxplots Tab
 with tabs[4]:
     st.header('Boxplots')
-
-    # Define the columns to plot and their titles
-    boxplot_columns = [
-        'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany'
-    ]
-    titles = [
-        'DistanceFromHome',
-        'JobSatisfaction',
-        'MonthlyIncome',
-        'YearsAtCompany'
-    ]
-
-    # Create a 2x2 grid of subplots
-    fig, axs = plt.subplots(2, 2, figsize=(14, 10))
-    fig.tight_layout(pad=5.0)
-
-    # Plot each boxplot in the respective subplot
+    boxplot_columns = ['DistanceFromHome', 'MonthlyIncome', 'Age', 'YearsAtCompany']
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    axes = axes.flatten()
     for i, column in enumerate(boxplot_columns):
-        row, col = divmod(i, 2)  # Determine the position in the grid
-        sns.boxplot(data=df_encoded, x='Attrition_Yes', y=column, ax=axs[row, col])
-        axs[row, col].set_title(titles[i])
-
-    # Remove any empty subplots if less than 4 columns are defined
-    for j in range(len(boxplot_columns), 4):
-        fig.delaxes(axs[j // 2, j % 2])
-
+        sns.boxplot(x='Attrition_Yes', y=column, data=df_encoded, ax=axes[i])
+        axes[i].set_title(f'Boxplot of {column} by Attrition')
     st.pyplot(fig)
 
-# Model Performance Tab
 with tabs[5]:
     st.header('Model Performance')
     features = [
