@@ -9,8 +9,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
-# File Path
-file_path = r"C:\Users\georg\Documents\BPP\Professional Practice\IBM Employee Attrition.csv"
+# File Path (relative path for Streamlit deployment)
+file_path = 'IBM Employee Attrition.csv'
 
 # Load and preprocess data
 df = pd.read_csv(file_path)
@@ -115,3 +115,4 @@ for name, model in models_weighted.items():
     st.text(f"Accuracy: {accuracy_score(y_test, y_pred):.2f}")
     st.text(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}")
     st.text(f"Classification Report:\n{classification_report(y_test, y_pred)}")
+
