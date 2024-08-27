@@ -51,21 +51,36 @@ tabs = st.tabs(["Overview", "Correlation Analysis", "Distributions", "Countplots
 
 with tabs[0]:
     st.header('Overview')
-    st.write("This dashboard provides an analysis of employee attrition data. It includes correlation analysis, distribution plots, countplots, and boxplots to visualize the data and model performance metrics.")
+    st.write("### Overview of the Analysis")
+    st.write("This dashboard provides a comprehensive analysis of the IBM Employee Attrition dataset. The dataset contains information about employees and their attributes, which helps in understanding the factors influencing employee attrition. The analysis includes:")
+    st.write("- **Correlation Analysis**: Explore how different features relate to each other.")
+    st.write("- **Distributions**: Understand the distribution of key numerical features with respect to attrition.")
+    st.write("- **Countplots**: Visualize the frequency of categorical features such as Business Travel and Overtime.")
+    st.write("- **Boxplots**: Compare the distribution of numerical features across different attrition groups.")
+    st.write("- **Model Performance**: Evaluate various machine learning models for predicting attrition.")
+    st.write("### Dataset Preview")
+    st.write(df.head())
 
 with tabs[1]:
-    st.header('Correlation Matrix (Encoded Data)')
+    st.header('Correlation Analysis')
+    st.write("### Correlation Matrices")
+    st.write("The correlation matrices help in understanding the relationships between different features in the dataset. Correlations close to 1 or -1 indicate a strong relationship between variables.")
+    
+    st.write("#### Encoded Data")
     fig, ax = plt.subplots(figsize=(12, 10))
     sns.heatmap(df_encoded_relevant.corr().round(2), annot=True, cmap='coolwarm', annot_kws={"size": 8}, ax=ax)
     st.pyplot(fig)
-
-    st.header('Correlation Matrix (Standardized Data)')
+    
+    st.write("#### Standardized Data")
     fig, ax = plt.subplots(figsize=(12, 10))
     sns.heatmap(df_standardized_relevant.corr().round(2), annot=True, cmap='coolwarm', annot_kws={"size": 8}, ax=ax)
     st.pyplot(fig)
 
 with tabs[2]:
     st.header('Distributions by Attrition')
+    st.write("### Distribution Plots")
+    st.write("Distribution plots show how key numerical features are distributed across different attrition groups. These plots help in understanding the spread and central tendency of these features.")
+    
     key_numerical_columns = [
         'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany'
     ]
@@ -82,6 +97,9 @@ with tabs[2]:
 
 with tabs[3]:
     st.header('Countplots')
+    st.write("### Countplots")
+    st.write("Countplots visualize the frequency of categorical features. These plots help in understanding the distribution of categories such as Business Travel and Overtime.")
+    
     countplot_columns = ['BusinessTravel_Travel_Rarely', 'BusinessTravel_Travel_Frequently', 'OverTime_Yes']
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     axes = axes.flatten()
@@ -93,6 +111,9 @@ with tabs[3]:
 
 with tabs[4]:
     st.header('Boxplots')
+    st.write("### Boxplots")
+    st.write("Boxplots provide a summary of the distribution of numerical features across different attrition groups. They help in identifying outliers and understanding the spread of data.")
+    
     boxplot_columns = ['DistanceFromHome', 'MonthlyIncome', 'Age', 'YearsAtCompany']
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     axes = axes.flatten()
@@ -103,6 +124,9 @@ with tabs[4]:
 
 with tabs[5]:
     st.header('Model Performance')
+    st.write("### Model Performance Analysis")
+    st.write("Different machine learning models are evaluated to predict employee attrition. The models include Logistic Regression, Random Forest, and Support Vector Machine (SVM). We assess their performance using accuracy, confusion matrix, and classification report.")
+    
     features = [
         'Age', 'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany',
         'OverTime_Yes', 'BusinessTravel_Travel_Frequently', 'BusinessTravel_Travel_Rarely'
