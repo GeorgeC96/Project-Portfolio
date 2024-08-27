@@ -47,7 +47,7 @@ df_standardized_relevant = df_standardized[relevant_vars]
 st.title('IBM Employee Attrition Analysis')
 
 # Create tabs
-tabs = st.tabs(["Home", "Correlation Matrices", "Distributions", "Model Performance"])
+tabs = st.tabs(["Home", "Correlation Matrices", "Distributions", "Countplots", "Boxplots", "Model Performance"])
 
 # Home Tab
 with tabs[0]:
@@ -97,8 +97,69 @@ with tabs[2]:
 
     st.pyplot(fig)
 
-# Model Performance Tab
+# Countplots Tab
 with tabs[3]:
+    st.header('Countplots')
+
+    # Define the columns to plot and their titles
+    countplot_columns = [
+        'BusinessTravel_Travel_Rarely', 'BusinessTravel_Travel_Frequently', 'OverTime_Yes'
+    ]
+    titles = [
+        'Business Travel: Rarely',
+        'Business Travel: Frequently',
+        'Overtime: Yes'
+    ]
+
+    # Create a 2x2 grid of subplots
+    fig, axs = plt.subplots(2, 2, figsize=(14, 10))
+    fig.tight_layout(pad=5.0)
+
+    # Plot each countplot in the respective subplot
+    for i, column in enumerate(countplot_columns):
+        row, col = divmod(i, 2)  # Determine the position in the grid
+        sns.countplot(data=df_encoded, x=column, ax=axs[row, col])
+        axs[row, col].set_title(titles[i])
+
+    # Remove any empty subplots if less than 4 columns are defined
+    for j in range(len(countplot_columns), 4):
+        fig.delaxes(axs[j // 2, j % 2])
+
+    st.pyplot(fig)
+
+# Boxplots Tab
+with tabs[4]:
+    st.header('Boxplots')
+
+    # Define the columns to plot and their titles
+    boxplot_columns = [
+        'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany'
+    ]
+    titles = [
+        'DistanceFromHome',
+        'JobSatisfaction',
+        'MonthlyIncome',
+        'YearsAtCompany'
+    ]
+
+    # Create a 2x2 grid of subplots
+    fig, axs = plt.subplots(2, 2, figsize=(14, 10))
+    fig.tight_layout(pad=5.0)
+
+    # Plot each boxplot in the respective subplot
+    for i, column in enumerate(boxplot_columns):
+        row, col = divmod(i, 2)  # Determine the position in the grid
+        sns.boxplot(data=df_encoded, x='Attrition_Yes', y=column, ax=axs[row, col])
+        axs[row, col].set_title(titles[i])
+
+    # Remove any empty subplots if less than 4 columns are defined
+    for j in range(len(boxplot_columns), 4):
+        fig.delaxes(axs[j // 2, j % 2])
+
+    st.pyplot(fig)
+
+# Model Performance Tab
+with tabs[5]:
     st.header('Model Performance')
     features = [
         'Age', 'DistanceFromHome', 'JobSatisfaction', 'MonthlyIncome', 'YearsAtCompany',
@@ -141,4 +202,3 @@ with tabs[3]:
         st.text(f"Accuracy: {accuracy_score(y_test, y_pred):.2f}")
         st.text(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}")
         st.text(f"Classification Report:\n{classification_report(y_test, y_pred)}")
-
