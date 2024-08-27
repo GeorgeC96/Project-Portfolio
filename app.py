@@ -55,7 +55,7 @@ with tabs[0]:
     st.write("This dashboard provides a comprehensive analysis of the IBM Employee Attrition dataset. The dataset contains information about employees and their attributes, which helps in understanding the factors influencing employee attrition. The analysis includes:")
     st.write("- **Correlation Analysis**: Explore how different features relate to each other.")
     st.write("- **Distributions**: Understand the distribution of key numerical features with respect to attrition.")
-    st.write("- **Countplots**: Visualize the frequency of categorical features such as Business Travel and Overtime.")
+    st.write("- **Countplots**: Visualise the frequency of categorical features such as Business Travel and Overtime.")
     st.write("- **Boxplots**: Compare the distribution of numerical features across different attrition groups.")
     st.write("- **Model Performance**: Evaluate various machine learning models for predicting attrition.")
     st.write("### Dataset Preview")
@@ -112,7 +112,7 @@ with tabs[2]:
 with tabs[3]:
     st.header('Countplots')
     st.write("### Countplots")
-    st.write("Countplots visualize the frequency of categorical features. These plots help in understanding the distribution of categories such as Business Travel and Overtime.")
+    st.write("Countplots visualise the frequency of categorical features. These plots help in understanding the distribution of categories such as Business Travel and Overtime.")
     
     countplot_columns = ['BusinessTravel_Travel_Rarely', 'BusinessTravel_Travel_Frequently', 'OverTime_Yes']
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
